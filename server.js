@@ -8,13 +8,18 @@ const PORT = 3232;
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+//Allows us to "expose" everything in the public folder, which is the front end to the back end
+app.use(express.static(__dirname + '/public'));
 
 //Routes
 
-// app.get('/', (req, res) => {
-//     res.send('Welcome to the Star Wars Page!');
-// });
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '/public/index.html'));
+});
+
+app.get('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, '/public/notes.html'));
+});
   
 // app.get('/yoda', (req, res) => {
 //     res.json(yoda);
