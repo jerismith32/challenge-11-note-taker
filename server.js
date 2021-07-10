@@ -1,6 +1,8 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const { v4: uuidv4 } = require('uuid');
+//console.log(uuidv4());
 
 const app = express();
 const PORT = 3232;
@@ -20,7 +22,20 @@ app.get('/', (req, res) => {
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
-  
+
+app.get('/api/notes', (req, res) => {
+
+fs.readFile('db/db.json', 'utf8' , (err, data) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+    console.log(data)
+    //When data is coming from a json file, we always need to parse it, so the front end can read it!
+    res.json(JSON.parse(data));
+  })
+
+});
 // app.get('/yoda', (req, res) => {
 //     res.json(yoda);
 // });
@@ -48,15 +63,31 @@ app.get('/notes', (req, res) => {
 // });
 
 // // Create a POST route that adds new characters
-// app.post('/api/characters', (req, res) => {
-//     const newCharacter = req.body;
+app.post('/api/notes', (req, res) => {
+    //req.body the information you sent from the back end
+    const newNote = req.body;
   
-//     console.log(newCharacter);
-  
-//     characters.push(newCharacter);
-  
-//     res.json(newCharacter);
-// });
+    
+    newNote.id = uuidv4();
+    console.log(newNote);
+    fs.readFile('db/db.json', 'utf8' , (err, note) => {
+        if (err) {
+          console.error(err)
+          return
+        }
+        console.log(note)
+        let notejson = JSON.parse(note);
+        notejson.push(newNote);
+        console.log(notejson);
+        fs.writeFile("db/db.json", JSON.stringify(notejson), (err) => {
+            if (err) console.log(err);
+            console.log("Successfully Written to File.");
+            res.json(notejson);
+        });
+
+    })
+
+});
 
 //Listener
 app.listen(PORT, () => {
