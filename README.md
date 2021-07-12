@@ -55,7 +55,7 @@
   This project is not open for contributions at this time.
 
   ## DeployedLink
-  [Note Taker]()
+  [Note Taker](https://jerismith32.github.io/challenge-11-note-taker/)
 
   ## Screenshots
   ![Home Page](public/assets/images/HomePage.png)
@@ -63,6 +63,7 @@
   ![Viewing a Saved Note](public/assets/images/SavedNote.png)
 
   ## Resources
+  
   [Nodemon Documentation](https://www.npmjs.com/package/nodemon)
 
   [Reading Files with Node.js](https://nodejs.dev/learn/reading-files-with-nodejs)
