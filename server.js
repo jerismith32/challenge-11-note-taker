@@ -74,6 +74,12 @@ app.post('/api/notes', (req, res) => {
 
 });
 
+
+//Listener
+app.listen(PORT, () => {
+    console.log(`App listening on PORT ${PORT}`);
+});
+
 //This will allow you to delete past notes
 // app.delete('/api/notes/:id', (req, res, next) => {
 //     const noteinQuestion = req.params.id;
@@ -125,16 +131,11 @@ app.post('/api/notes', (req, res) => {
 
 // });
 
-
-app.delete("/api/notes/:id", function(req, res) {
-    console.log("req params", req.params.id)
-    const itemIndex = myArray.findIndex(({ id }) => id === req.params.id);
-    if (itemIndex >= 0) {
-      myArray.splice(itemIndex, 1);
-    }
-  });
-
-//Listener
-app.listen(PORT, () => {
-    console.log(`App listening on PORT ${PORT}`);
-});
+// app.delete("/api/notes/:id", function(req, res) {
+//     console.log("req params", req.params.id)
+//     //myArray not defined
+//     const itemIndex = myArray.findIndex(({ id }) => id === req.params.id);
+//     if (itemIndex >= 0) {
+//       myArray.splice(itemIndex, 1);
+//     }
+// });
