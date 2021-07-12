@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+//This allows us to create each note with a unique id
 const { v4: uuidv4 } = require('uuid');
 //console.log(uuidv4());
 
@@ -13,7 +14,7 @@ app.use(express.json());
 //Allows us to "expose" everything in the public folder, which is the front end to the back end
 app.use(express.static(__dirname + '/public'));
 
-//Routes
+// Routes
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
@@ -24,61 +25,45 @@ app.get('/notes', (req, res) => {
 });
 
 app.get('/api/notes', (req, res) => {
-
-fs.readFile('db/db.json', 'utf8' , (err, data) => {
-    if (err) {
-      console.error(err)
-      return
+    fs.readFile('db/db.json', 'utf8' , (err, data) => {
+        if (err) {
+        console.error(err)
+        return
     }
-    console.log(data)
+    //console.log(data)
     //When data is coming from a json file, we always need to parse it, so the front end can read it!
     res.json(JSON.parse(data));
-  })
+    })
 
 });
-// app.get('/yoda', (req, res) => {
-//     res.json(yoda);
-// });
-  
-// app.get('/darthmaul', (req, res) => {
-//     res.json(darthmaul);
-// });
-  
-// Create a new Express route that leads users to the new Obi Wan Kenobi data
-// app.get('/obiwankenobi', (req, res) => {
-//     res.json(obiwankenobi);
-// });
 
+app.get('/api/notes/:id', (req, res) => {
+    let pastNote = fs.readFile('db/db.json', 'utf8' , (err, data) => {
+        if (err) {
+        console.error(err)
+        return res.json(pastNote)[Number(req.params.id)];
+        }
+    })    
+});
 
-// Create just one GET route that returns any given specific character
-// app.get('/api/characters/:character', (req, res) => {
-//     const chosen = req.params.character;
-//     // Iterate through the characters' routeNames to check if it matches `req.params.character`
-//     for (let i = 0; i < characters.length; i++) {
-//         if (chosen === characters[i].routeName) {
-//             return res.json(characters[i]);
-//         }
-//     }
-//     return res.send('No character found');
-// });
-
-// // Create a POST route that adds new characters
+// Create a POST route that adds the new note with a specific id
 app.post('/api/notes', (req, res) => {
     //req.body the information you sent from the back end
     const newNote = req.body;
-  
-    
+    // This will give the new note a specific id as coded in the index.js file
     newNote.id = uuidv4();
-    console.log(newNote);
+    //console.log(newNote);
     fs.readFile('db/db.json', 'utf8' , (err, note) => {
         if (err) {
           console.error(err)
           return
         }
-        console.log(note)
+        //console.log(note)
+        //When data is coming from a json file, we always need to parse it, so the front end can read it!
         let notejson = JSON.parse(note);
         notejson.push(newNote);
-        console.log(notejson);
+        //console.log(notejson);
+        //Here we need to use the stringify (basically the opposite of parse)
         fs.writeFile("db/db.json", JSON.stringify(notejson), (err) => {
             if (err) console.log(err);
             console.log("Successfully Written to File.");
@@ -88,6 +73,66 @@ app.post('/api/notes', (req, res) => {
     })
 
 });
+
+//This will allow you to delete past notes
+// app.delete('/api/notes/:id', (req, res, next) => {
+//     const noteinQuestion = req.params.id;
+//     fs.readFile('db/db.json', 'utf8' , (err, note) => {
+//         if (err) {
+//         console.error(err)
+//         let notetoDelete = JSON.parse(note);
+//         notetoDelete.delete(noteinQuestion, (err) => {
+//             if (err) return next(err);
+//             res.send({ message: 'Deleted' });
+//            });
+        
+//         }
+//     }) 
+//     // const id = req.params.id;
+//     // //Article is giving an error, not definited
+//     // Article.delete(id, (err) => {
+//     //  if (err) return next(err);
+//     //  res.send({ message: 'Deleted' });
+//     // });
+// });
+
+// app.delete("/api/notes/:id", (req, res) => {
+//     console.log("req params", req.params.id)
+//     myArray = myArray.filter(({ id }) => id !== req.params.id);
+// });
+
+// app.delete('/api/notes/:id', (req, res) => {
+//     //req.body the information you sent from the back end
+//     const deleteNote = req.body;
+//     fs.readFile('db/db.json', 'utf8' , (err, note) => {
+//         if (err) {
+//           console.error(err)
+//           return
+//         }
+//         //console.log(note)
+//         //When data is coming from a json file, we always need to parse it, so the front end can read it!
+//         let notejson = JSON.parse(note);
+//         notejson.push(newNote);
+//         //console.log(notejson);
+//         //Here we need to use the stringify (basically the opposite of parse)
+//         fs.writeFile("db/db.json", JSON.stringify(notejson), (err) => {
+//             if (err) console.log(err);
+//             console.log("Successfully Written to File.");
+//             res.json(notejson);
+//         });
+
+//     })
+
+// });
+
+
+app.delete("/api/notes/:id", function(req, res) {
+    console.log("req params", req.params.id)
+    const itemIndex = myArray.findIndex(({ id }) => id === req.params.id);
+    if (itemIndex >= 0) {
+      myArray.splice(itemIndex, 1);
+    }
+  });
 
 //Listener
 app.listen(PORT, () => {
